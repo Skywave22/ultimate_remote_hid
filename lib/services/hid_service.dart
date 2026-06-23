@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum ConnectionStatus { disconnected, pairing, connected, error }
 class HidState {
-  final ConnectionStatus status;
-  final String errorMessage;
-  final String connectedDeviceName;
+  final ConnectionStatus status; final String errorMessage; final String connectedDeviceName;
   HidState({this.status = ConnectionStatus.disconnected, this.errorMessage = '', this.connectedDeviceName = ''});
   HidState copyWith({ConnectionStatus? status, String? errorMessage, String? connectedDeviceName}) {
     return HidState(status: status ?? this.status, errorMessage: errorMessage ?? this.errorMessage, connectedDeviceName: connectedDeviceName ?? this.connectedDeviceName);

@@ -4,25 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum ComponentType { button, touchpad, joystick, slider, scanner }
 
 class AppComponent {
-  final String id;
-  final String label;
-  final ComponentType type;
-  final Offset relativePosition;
-  final Size relativeSize;
-  final Color color;
-  final String actionValue; 
-  
+  final String id; final String label; final ComponentType type; final Offset relativePosition; final Size relativeSize; final Color color; final String actionValue; 
   AppComponent({required this.id, required this.label, required this.type, required this.relativePosition, required this.relativeSize, required this.color, required this.actionValue});
-
   AppComponent copyWith({String? label, Offset? relativePosition, Size? relativeSize, Color? color, String? actionValue}) {
     return AppComponent(id: this.id, label: label ?? this.label, type: this.type, relativePosition: relativePosition ?? this.relativePosition, relativeSize: relativeSize ?? this.relativeSize, color: color ?? this.color, actionValue: actionValue ?? this.actionValue);
   }
 }
 
 class LayoutState {
-  final List<AppComponent> components;
-  final Color themePrimaryColor;
-  final bool isEditMode;
+  final List<AppComponent> components; final Color themePrimaryColor; final bool isEditMode;
   LayoutState({required this.components, required this.themePrimaryColor, this.isEditMode = false});
   LayoutState copyWith({List<AppComponent>? components, Color? themePrimaryColor, bool? isEditMode}) {
     return LayoutState(components: components ?? this.components, themePrimaryColor: themePrimaryColor ?? this.themePrimaryColor, isEditMode: isEditMode ?? this.isEditMode);
