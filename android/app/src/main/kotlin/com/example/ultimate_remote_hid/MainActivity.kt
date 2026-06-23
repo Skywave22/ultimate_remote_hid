@@ -1,4 +1,5 @@
 package com.example.ultimate_remote_hid
+
 import android.bluetooth.*
 import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
@@ -31,65 +32,33 @@ class MainActivity: FlutterActivity() {
                 if (profile == BluetoothProfile.HID_DEVICE) {
                     bluetoothHidDevice = proxy as BluetoothHidDevice
                     try {
-                        // Build SDP settings - try multiple API approaches
                         val sdp = BluetoothHidDeviceAppSdpSettings(
                             "Ultimate Remote",
                             "Ultimate Remote HID",
                             "Ultimate",
                             BluetoothHidDevice.SUBCLASS1_COMBO,
                             byteArrayOf(
-                                0x05.toByte(), 0x01.toByte(), // Usage Page (Generic Desktop)
-                                0x09.toByte(), 0x06.toByte(), // Usage (Keyboard)
-                                0xA1.toByte(), 0x01.toByte(), // Collection (Application)
-                                0x05.toByte(), 0x07.toByte(), // Usage Page (Key Codes)
-                                0x19.toByte(), 0xE0.toByte(), // Usage Minimum (224)
-                                0x29.toByte(), 0xE7.toByte(), // Usage Maximum (231)
-                                0x15.toByte(), 0x00.toByte(), // Logical Minimum (0)
-                                0x25.toByte(), 0x01.toByte(), // Logical Maximum (1)
-                                0x75.toByte(), 0x01.toByte(), // Report Size (1)
-                                0x95.toByte(), 0x08.toByte(), // Report Count (8)
-                                0x81.toByte(), 0x02.toByte(), // Input (Data, Variable, Absolute)
-                                0x95.toByte(), 0x01.toByte(), // Report Count (1)
-                                0x75.toByte(), 0x08.toByte(), // Report Size (8)
-                                0x81.toByte(), 0x01.toByte(), // Input (Constant)
-                                0x95.toByte(), 0x06.toByte(), // Report Count (6)
-                                0x75.toByte(), 0x08.toByte(), // Report Size (8)
-                                0x15.toByte(), 0x00.toByte(), // Logical Minimum (0)
-                                0x25.toByte(), 0x65.toByte(), // Logical Maximum (101)
-                                0x05.toByte(), 0x07.toByte(), // Usage Page (Key Codes)
-                                0x19.toByte(), 0x00.toByte(), // Usage Minimum (0)
-                                0x29.toByte(), 0x65.toByte(), // Usage Maximum (101)
-                                0x81.toByte(), 0x00.toByte(), // Input (Data, Array)
-                                0xC0.toByte() // End Collection
+                                0x05.toByte(), 0x01.toByte(), 0x09.toByte(), 0x06.toByte(), 0xA1.toByte(), 0x01.toByte(),
+                                0x05.toByte(), 0x07.toByte(), 0x19.toByte(), 0xE0.toByte(), 0x29.toByte(), 0xE7.toByte(),
+                                0x15.toByte(), 0x00.toByte(), 0x25.toByte(), 0x01.toByte(), 0x75.toByte(), 0x01.toByte(),
+                                0x95.toByte(), 0x08.toByte(), 0x81.toByte(), 0x02.toByte(), 0x95.toByte(), 0x01.toByte(),
+                                0x75.toByte(), 0x08.toByte(), 0x81.toByte(), 0x01.toByte(), 0x95.toByte(), 0x06.toByte(),
+                                0x75.toByte(), 0x08.toByte(), 0x15.toByte(), 0x00.toByte(), 0x25.toByte(), 0x65.toByte(),
+                                0x05.toByte(), 0x07.toByte(), 0x19.toByte(), 0x00.toByte(), 0x29.toByte(), 0x65.toByte(),
+                                0x81.toByte(), 0x00.toByte(), 0xC0.toByte()
                             )
                         )
                         val executor = Executor { it.run() }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            bluetoothHidDevice?.registerApp(sdp, null, null, executor, object : BluetoothHidDevice.Callback() {
-                                override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
-                                    val status = if (state == BluetoothProfile.STATE_CONNECTED) "connected" else "disconnected"
-                                    runOnUiThread { methodChannel?.invokeMethod("onStatusChanged", status) }
-                                }
-                                override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
-                                    super.onAppStatusChanged(pluggedDevice, registered)
-                                }
-                            })
-                        } else {
-                            bluetoothHidDevice?.registerApp(sdp, null, null, executor, object : BluetoothHidDevice.Callback() {
-                                override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
-                                    val status = if (state == BluetoothProfile.STATE_CONNECTED) "connected" else "disconnected"
-                                    runOnUiThread { methodChannel?.invokeMethod("onStatusChanged", status) }
-                                }
-                            })
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                        bluetoothHidDevice?.registerApp(sdp, null, null, executor, object : BluetoothHidDevice.Callback() {
+                            override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
+                                val status = if (state == BluetoothProfile.STATE_CONNECTED) "connected" else "disconnected"
+                                runOnUiThread { methodChannel?.invokeMethod("onStatusChanged", status) }
+                            }
+                        })
+                    } catch (e: Exception) { e.printStackTrace() }
                 }
             }
-            override fun onServiceDisconnected(profile: Int) {
-                bluetoothHidDevice = null
-            }
+            override fun onServiceDisconnected(profile: Int) { bluetoothHidDevice = null }
         }, BluetoothProfile.HID_DEVICE)
     }
 
@@ -105,19 +74,18 @@ class MainActivity: FlutterActivity() {
                 "P" to 0x13.toByte(), "Q" to 0x14.toByte(), "R" to 0x15.toByte(),
                 "S" to 0x16.toByte(), "T" to 0x17.toByte(), "U" to 0x18.toByte(),
                 "V" to 0x19.toByte(), "W" to 0x1D.toByte(), "X" to 0x1B.toByte(),
-                "Y" to 0x1C.toByte(), "Z" to 0x1D.toByte(),
-                "VOL_UP" to 0x80.toByte(), "VOL_DOWN" to 0x81.toByte()
+                "Y" to 0x1C.toByte(), "Z" to 0x1D.toByte()
             )
             val keyCode = keyMap[key?.uppercase()] ?: 0x00.toByte()
             bluetoothHidDevice?.sendReport(null, 1, byteArrayOf(0x00, 0x00, keyCode, 0x00, 0x00, 0x00, 0x00, 0x00))
             Thread.sleep(20)
             bluetoothHidDevice?.sendReport(null, 1, byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (e: Exception) { }
     }
 
     private fun sendMouseReport(dx: Double, dy: Double) {
         try {
             bluetoothHidDevice?.sendReport(null, 2, byteArrayOf(0x00, dx.toInt().toByte(), dy.toInt().toByte(), 0x00))
-        } catch (e: Exception) { e.printStackTrace() }
+        } catch (e: Exception) { }
     }
 }
