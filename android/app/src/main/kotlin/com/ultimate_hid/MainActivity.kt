@@ -27,8 +27,7 @@ class MainActivity: FlutterActivity() {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                 if (profile == BluetoothProfile.HID_DEVICE) {
                     bluetoothHidDevice = proxy as BluetoothHidDevice
-                    val sdp = BluetoothHidDeviceAppSdpSettings.Builder()
-                        .setProductName("Ultimate Remote").setAppearance(BluetoothHidDevice.Appearance.KEYBOARD).build()
+                    val sdp = BluetoothHidDeviceAppSdpSettings.Builder().setProductName("Ultimate Remote").setAppearance(BluetoothHidDevice.Appearance.KEYBOARD).build()
                     bluetoothHidDevice?.registerApp(sdp, null, null, Context.MODE_PRIVATE, object : BluetoothHidDevice.Callback() {
                         override fun onConnectionStateChanged(device: BluetoothDevice, state: Int) {
                             val status = if (state == BluetoothProfile.STATE_CONNECTED) "connected" else "disconnected"
@@ -42,7 +41,7 @@ class MainActivity: FlutterActivity() {
     }
 
     private fun sendKeyReport(key: String?) {
-        val keyMap = mapOf("ENTER" to 0x28.toByte(), "SPACE" to 0x2C.toByte(), "A" to 0x04.toByte())
+        val keyMap = mapOf("ENTER" to 0x28.toByte(), "SPACE" to 0x2C.toByte(), "A" to 0x04.toByte(), "B" to 0x05.toByte(), "C" to 0x06.toByte(), "VOL_UP" to 0x80.toByte(), "VOL_DOWN" to 0x81.toByte())
         val keyCode = keyMap[key?.uppercase()] ?: 0x00.toByte()
         bluetoothHidDevice?.sendReport(null, 1, byteArrayOf(0x00, 0x00, keyCode, 0x00, 0x00, 0x00, 0x00, 0x00))
         Thread.sleep(20)
