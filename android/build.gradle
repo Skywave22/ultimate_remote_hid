@@ -1,3 +1,24 @@
+buildscript {
+    ext.kotlin_version = '1.9.0'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+    
+    configurations.all {
+        resolutionStrategy {
+            force "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0"
+            force "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+            force "org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.0"
+        }
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -11,6 +32,22 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+    project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = '1.8'
+            languageVersion = '1.9'
+            apiVersion = '1.9'
+        }
+    }
+}
+
+// Disable Kotlin compilation for included gradle build
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks.each { task ->
+        if (task.path == ":gradle:compileKotlin") {
+            task.enabled = false
+        }
+    }
 }
 
 tasks.register("clean", Delete) {
